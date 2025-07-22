@@ -27,8 +27,6 @@ export const useQueryParams = <const T extends readonly string[]>({
     value?: string | string[],
     options?: { replace?: boolean },
   ) => {
-    console.log("set.replace:", options?.replace ?? defaultReplace)
-
     const params = new URLSearchParams(searchParams);
     params.delete(key);
     
@@ -45,7 +43,6 @@ export const useQueryParams = <const T extends readonly string[]>({
     newParams?: URLSearchParams | Record<T[number], string | string[]>,
     options?: { replace?: boolean },
   ) => {
-    console.log("replace.replace:", options?.replace ?? defaultReplace)
     setSearchParams(newParams, { replace: options?.replace ?? defaultReplace });
   }
 
