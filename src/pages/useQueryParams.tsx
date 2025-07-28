@@ -7,7 +7,9 @@ const normalizeValuesToArray = (value?: string | string[]): string[] => {
 
 interface useQueryParamsProps<T extends readonly string[]>{
   schema?: T,
-  defaultInit?: URLSearchParams | Record<T[number], string | string[]>,
+  defaultInit?:
+    | URLSearchParams
+    | ({ type?: 'object' } & Partial<Record<T[number], string | string[]>>);
   options?: { defaultReplace?: boolean }
 }
 

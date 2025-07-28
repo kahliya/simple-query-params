@@ -8,7 +8,8 @@ const ReactRouterExample = () => {
   // With a string[] schema given, all unrecognised keys will be flagged by typescript (compile error)
   // The URL param will still be updated though, it is not a runtime error.
   const { params, setParam, replaceParams } = useQueryParams({
-    schema: ["cake", "muffin"],
+    schema: [ "cake", "muffin" ],
+    defaultInit: { muffin: "5001" }
   });
 
   return (
