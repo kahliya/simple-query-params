@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router"
 
 const normalizeValuesToArray = (value?: string | string[]): string[] => {
@@ -16,10 +16,14 @@ export const useQueryParams = <const T extends readonly string[]>({
   options,
 }: useQueryParamsProps<T>) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const defaultReplace = options?.defaultReplace ?? true;
+
+  const defaultInitRef = useRef(defaultInit ?? searchParams);
+  const defaultReplaceRef = useRef(options?.defaultReplace ?? true);
 
   useEffect(() => {
-    setSearchParams(defaultInit, { replace: defaultReplace });
+    setSearchParams(defaultInitRef.current, {
+      replace: defaultReplaceRef.current,
+    });
   }, []);
 
   const setParam = (
@@ -36,14 +40,14 @@ export const useQueryParams = <const T extends readonly string[]>({
       params.append(key, v);
     }
 
-    setSearchParams(params, { replace: options?.replace ?? defaultReplace });
+    setSearchParams(params, { replace: options?.replace ?? defaultReplaceRef.current });
   }
 
   const replaceParams = (
     newParams?: URLSearchParams | Record<T[number], string | string[]>,
     options?: { replace?: boolean },
   ) => {
-    setSearchParams(newParams, { replace: options?.replace ?? defaultReplace });
+    setSearchParams(newParams, { replace: options?.replace ?? defaultReplaceRef.current });
   }
 
   return { 

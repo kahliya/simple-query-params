@@ -1,9 +1,7 @@
-import { useSearchParams } from "react-router";
 import { useQueryParams } from "./useQueryParams";
 import { useState } from "react";
 
 const ReactRouterExample = () => {
-  const [searchParams] = useSearchParams();
   const [v1, setV1] = useState<string>("");
   const [v2, setV2] = useState<string>("");
 
@@ -11,7 +9,6 @@ const ReactRouterExample = () => {
   // The URL param will still be updated though, it is not a runtime error.
   const { params, setParam, replaceParams } = useQueryParams({
     schema: ["cake", "muffin"],
-    defaultInit: searchParams,
   });
 
   return (
