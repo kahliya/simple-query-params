@@ -5,12 +5,10 @@ const normalizeValuesToArray = (value?: string | string[]): string[] => {
   return Array.isArray(value) ? value : (value ? [value] : []); 
 }
 
-interface useQueryParamsProps<T extends readonly string[]>{
-  schema?: T,
-  defaultInit?:
-    | URLSearchParams
-    | ({ type?: 'object' } & Partial<Record<T[number], string | string[]>>);
-  options?: { defaultReplace?: boolean }
+interface useQueryParamsProps<T extends readonly string[]> {
+  schema?: T;
+  defaultInit?: URLSearchParams | Partial<Record<T[number], string | string[]>>;
+  options?: { defaultReplace?: boolean };
 }
 
 export const useQueryParams = <const T extends readonly string[]>({
@@ -23,9 +21,12 @@ export const useQueryParams = <const T extends readonly string[]>({
   const defaultReplaceRef = useRef(options?.defaultReplace ?? true);
 
   useEffect(() => {
-    setSearchParams(defaultInitRef.current, {
-      replace: defaultReplaceRef.current,
-    });
+    setSearchParams(
+      defaultInitRef.current as Record<string, string | string[]>,
+      {
+        replace: defaultReplaceRef.current,
+      }
+    );
   }, []);
 
   const setParam = (
