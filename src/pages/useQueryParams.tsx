@@ -12,11 +12,14 @@ interface useQueryParamsProps<T extends readonly string[]> {
 }
 
 export const useQueryParams = <const T extends readonly string[]>({
+  schema,
   defaultInit,
   options,
 }: useQueryParamsProps<T>) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // useRef to ensure stable constants
+  const schemaSetRef = useRef(new Set(schema));
   const defaultInitRef = useRef(defaultInit ?? searchParams);
   const defaultReplaceRef = useRef(options?.defaultReplace ?? true);
 
@@ -28,6 +31,23 @@ export const useQueryParams = <const T extends readonly string[]>({
       }
     );
   }, []);
+
+  useEffect(() => {
+    if (schemaSetRef.current.size === 0) return;
+
+    const invalidKeys: string[] = [];
+    for (const key of searchParams.keys()) {
+      if (!schemaSetRef.current.has(key)) invalidKeys.push(key);
+    }
+
+    if (invalidKeys.length > 0) {
+      console.warn(
+        '[useQueryParams] Found unknown query key(s).',
+        'If intentional, consider adding these keys to the schema',
+        invalidKeys
+      );
+    }
+  }, [searchParams]);
 
   const setParam = (
     key: T[number], 
