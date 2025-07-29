@@ -8,7 +8,10 @@ const normalizeValuesToArray = (value?: string | string[]): string[] => {
 interface useQueryParamsProps<T extends readonly string[]> {
   schema?: T;
   defaultInit?: URLSearchParams | Partial<Record<T[number], string | string[]>>;
-  options?: { defaultReplace?: boolean };
+  options?: {
+    defaultReplace?: boolean;
+    warnOnUnknownKeys?: boolean;
+  };
 }
 
 export const useQueryParams = <const T extends readonly string[]>({
@@ -22,7 +25,9 @@ export const useQueryParams = <const T extends readonly string[]>({
   const schemaSetRef = useRef(new Set(schema));
   const defaultInitRef = useRef(defaultInit ?? searchParams);
   const defaultReplaceRef = useRef(options?.defaultReplace ?? true);
+  const warnOnUnknownKeysRef = useRef(options?.warnOnUnknownKeys ?? true);
 
+  // Intentionally runs only once, initializes query params with defaultInit if given
   useEffect(() => {
     setSearchParams(
       defaultInitRef.current as Record<string, string | string[]>,
@@ -32,8 +37,11 @@ export const useQueryParams = <const T extends readonly string[]>({
     );
   }, []);
 
+  // Checks for unknown keys & warns every time params are updated
   useEffect(() => {
-    if (schemaSetRef.current.size === 0) return;
+    if (!warnOnUnknownKeysRef.current || schemaSetRef.current.size === 0) {
+      return;
+    }
 
     const invalidKeys: string[] = [];
     for (const key of searchParams.keys()) {
